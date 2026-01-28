@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart - GIKOMBA ONLINE</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body{ color:#e5e7eb; background:#0f172a; font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell }
+    header, footer{ padding:1rem }
+    nav ul{ display:flex; gap:.75rem; list-style:none; padding:0 }
+    a{ color:#86efac; text-decoration:none }
+
+    .container{ max-width:1000px; margin:0 auto; padding:1rem }
+    .card{ background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1rem }
+    .cart-row{ display:grid; grid-template-columns: 1fr auto auto auto; gap:.75rem; align-items:center; border-bottom:1px solid rgba(255,255,255,0.06); padding:.5rem 0 }
+    .cart-row:last-child{ border-bottom:none }
+    .qty{ display:flex; align-items:center; gap:.35rem }
+    .icon{ width:28px; height:28px; display:grid; place-items:center; border-radius:8px; background:#0a1222; color:#e5e7eb; border:1px solid rgba(255,255,255,0.12) }
+    .btn{ background:#1a2e22; color:#d1fae5; border:1px solid rgba(34,197,94,.25); padding:.5rem .7rem; border-radius:8px; cursor:pointer }
+    .muted{ color:#94a3b8 }
+    .totals{ display:grid; gap:.35rem; margin-top:1rem }
+    .row{ display:flex; justify-content:space-between }
+    .right{ text-align:right }
+    .nav-cart-count{ background:#22c55e; color:#0b1220; border-radius:999px; padding:0 .4rem; margin-left:.35rem; font-weight:700 }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GIKOMBA ONLINE</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="caps.html">Caps</a></li>
+        <li><a href="jackets.html">Jackets</a></li>
+        <li><a href="pants.html">Pants</a></li>
+        <li><a href="shirts.html">Shirts</a></li>
+        <li><a href="cart.html">Cart <span id="cartCount" class="nav-cart-count">0</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Your Cart</h2>
+    <div id="cart" class="card"></div>
+
+    <div class="totals card" style="margin-top:1rem">
+      <div class="row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+      <div class="row"><span class="muted">Shipping</span><span id="shipping" class="muted">$0.00</span></div>
+      <div class="row"><span>Total</span><strong id="total">$0.00</strong></div>
+      <div class="right" style="margin-top:.5rem">
+        <button id="checkout" class="btn">Checkout</button>
+        <button id="clear" class="btn">Clear Cart</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="container muted">&copy; 2026 Online Thrift Store</footer>
+
+  <script src="cart.js"></script>
+  <script>
+    // Known products (extend as other pages add items)
+    const PRODUCTS = {
+      // Caps
+      cap1: { id:'cap1', name:'Classic Cap', price:10 },
+      cap2: { id:'cap2', name:'Snapback Cap', price:12 },
+      cap3: { id:'cap3', name:'Sport Cap', price:15 },
+      cap4: { id:'cap4', name:'Wool Beanie', price:9 },
+      // Jackets
+      j1: { id:'j1', name:'Vintage Denim Jacket', price:28 },
+      j2: { id:'j2', name:'Brown Leather Jacket', price:45 },
+      j3: { id:'j3', name:'Puffer Jacket', price:30 },
+      j4: { id:'j4', name:'Blue Jean Jacket', price:24 },
+      // Pants
+      p1: { id:'p1', name:'Blue Jeans', price:20 },
+      p2: { id:'p2', name:'Khaki Chinos', price:18 },
+      p3: { id:'p3', name:'Cargo Pants', price:22 },
+      p4: { id:'p4', name:'Sweatpants', price:14 },
+      // Shirts
+      s1: { id:'s1', name:'Graphic Tee', price:15 },
+      s2: { id:'s2', name:'Flannel Shirt', price:18 },
+      s3: { id:'s3', name:'Oxford Shirt', price:22 },
+      s4: { id:'s4', name:'Polo Shirt', price:14 },
+    };
+
+    const cartEl = document.getElementById('cart');
+    const subtotalEl = document.getElementById('subtotal');
+    const shippingEl = document.getElementById('shipping');
+    const totalEl = document.getElementById('total');
+
+    function money(n){ return `${Number(n).toFixed(2)}` }
+
+    function render(){
+      const list = Cart.items();
+      const count = Cart.count();
+      document.getElementById('cartCount').textContent = String(count);
+
+      if(list.length === 0){
+        cartEl.innerHTML = '<p class="muted">Your cart is empty.</p>';
+      } else {
+        cartEl.innerHTML = list.map(({id, qty})=>{
+          const p = PRODUCTS[id] || { id, name: `Item (${id})`, price: 0 };
+          const line = (p.price||0) * qty;
+          return `
+            <div class="cart-row" data-id="${id}">
+              <div><strong>${p.name}</strong><div class="muted">${(p.price||0).toFixed(2)}</div></div>
+              <div class="qty">
+                <button class="icon dec" aria-label="Decrease">−</button>
+                <input class="q" type="number" min="0" value="${qty}" style="width:56px; text-align:center"/>
+                <button class="icon inc" aria-label="Increase">+</button>
+              </div>
+              <div>${money(line)}</div>
+              <button class="icon rm" title="Remove">✖</button>
+            </div>`;
+        }).join('');
+      }
+
+      const { subtotal, shipping, total } = Cart.totals(PRODUCTS);
+      subtotalEl.textContent = money(subtotal);
+      shippingEl.textContent = money(shipping);
+      totalEl.textContent = money(total);
+    }
+
+    // Events
+    cartEl.addEventListener('click', (e)=>{
+      const row = e.target.closest('.cart-row'); if(!row) return;
+      const id = row.dataset.id;
+      if(e.target.closest('.inc')) Cart.setQty(id, (Cart.get()[id]||0)+1);
+      if(e.target.closest('.dec')) Cart.setQty(id, (Cart.get()[id]||0)-1);
+      if(e.target.closest('.rm')) Cart.remove(id);
+    });
+    cartEl.addEventListener('change', (e)=>{
+      if(e.target.classList.contains('q')){
+        const id = e.target.closest('.cart-row').dataset.id;
+        Cart.setQty(id, Math.max(0, Number(e.target.value||0)));
+      }
+    });
+
+    document.getElementById('clear').addEventListener('click', ()=>{ Cart.clear(); });
+
+    document.getElementById('checkout').addEventListener('click', ()=>{
+      if(Cart.count() === 0){ alert('Your cart is empty.'); return; }
+      Cart.downloadReceipt(PRODUCTS, 'receipt.txt');
+      Cart.clear();
+    });
+
+    // Re-render when cart changes anywhere
+    Cart.onChange(render);
+
+    // Initial render and badge
+    render();
+  </script>
+</body>
+</html>

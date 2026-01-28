@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GIKOMBA ONLINE</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .nav-cart-count{ background:#22c55e; color:#0b1220; border-radius:999px; padding:0 .4rem; margin-left:.35rem; font-weight:700 }
+    .product-list{ display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:1rem }
+    .product-item{ background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:10px; border:1px solid rgba(255,255,255,0.08) }
+    .product-item img{ width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px }
+                    .btn{ background:#1a2e22; color:#d1fae5; border:1px solid rgba(34,197,94,.25); padding:.5rem .7rem; border-radius:8px }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="store-title">GIKOMBA ONLINE</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="caps.html">Caps</a></li>
+        <li><a href="jackets.html">Jackets</a></li>
+        <li><a href="pants.html">Pants</a></li>
+        <li><a href="shirts.html">Shirts</a></li>
+        <li><a id="cartLink" href="cart.html">Cart <span id="cartCount" class="nav-cart-count">0</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Featured Products</h2>
+    <div class="product-list">
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1479064555552-3ef4979f8908?q=80&w=800&auto=format&fit=crop" alt="Cap - Classic">
+        <h3>Classic Cap</h3>
+        <p>$10</p>
+        <button class="btn add" data-id="cap1">Add to Cart</button>
+      </div>
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1502462041640-b3d7e50d0660?q=80&w=800&auto=format&fit=crop" alt="Cap - Snapback">
+        <h3>Snapback Cap</h3>
+        <p>$12</p>
+        <button class="btn add" data-id="cap2">Add to Cart</button>
+      </div>
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" alt="Cap - Sport">
+        <h3>Sport Cap</h3>
+        <p>$15</p>
+        <button class="btn add" data-id="cap3">Add to Cart</button>
+      </div>
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1534216805911-ecb43f357de8?q=80&w=800&auto=format&fit=crop" alt="Beanie">
+        <h3>Wool Beanie</h3>
+        <p>$9</p>
+        <button class="btn add" data-id="cap4">Add to Cart</button>
+      </div>
+    </div>
+  </main>
+
+  <aside>
+    <h2>Categories</h2>
+    <ul>
+      <li><a href="caps.html">Caps</a></li>
+      <li><a href="pants.html">Pants</a></li>
+      <li><a href="shirts.html">Shirts</a></li>
+      <li><a href="jackets.html">Jackets</a></li>
+    </ul>
+  </aside>
+
+  <footer>
+    <p>&copy; 2022 Online Thrift Store</p>
+  </footer>
+
+  
+  <script>
+    // Simple product catalog for this page
+    const PRODUCTS = {
+      cap1: { id:'cap1', name:'Classic Cap', price:10 },
+      cap2: { id:'cap2', name:'Snapback Cap', price:12 },
+      cap3: { id:'cap3', name:'Sport Cap', price:15 },
+      cap4: { id:'cap4', name:'Wool Beanie', price:9 },
+    };
+
+    // Cart utilities using localStorage
+    const CART_KEY = 'thrift_cart_simple';
+    function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)) || {}; } catch { return {}; } }
+    function saveCart(cart){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+    function getCartCount(cart){ return Object.values(cart).reduce((a,b)=>a+b,0); }
+
+    function renderCartCount(){
+      const cart = loadCart();
+      document.getElementById('cartCount').textContent = getCartCount(cart);
+    }
+
+    function addToCart(id){
+      const cart = loadCart();
+      cart[id] = (cart[id]||0) + 1;
+      saveCart(cart);
+      renderCartCount();
+    }
+
+    
+    // Bindings
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.add');
+      if(btn){ addToCart(btn.dataset.id); }
+    });
+
+    
+    // Init
+    renderCartCount();
+  </script>
+</body>
+</html>

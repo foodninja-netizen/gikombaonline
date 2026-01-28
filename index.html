@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GIKOMBA ONLINE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1 class="store-title">GIKOMBA ONLINE</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="caps.html">Caps</a></li>
+        <li><a href="jackets.html">Jackets</a></li>
+        <li><a href="pants.html">Pants</a></li>
+        <li><a href="shirts.html">Shirts</a></li>
+        <li><a href="cart.html">Cart <span id="cartCount" class="nav-cart-count">0</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Featured Products</h2>
+    <div class="product-list">
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1479064555552-3ef4979f8908?q=80&w=800&auto=format&fit=crop" alt="Classic Cap">
+        <h3>Classic Cap</h3>
+        <p>$10</p>
+        <button class="btn add" data-id="cap1">Add to Cart</button>
+      </div>
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000&auto=format&fit=crop" alt="Blue Jeans">
+        <h3>Blue Jeans</h3>
+        <p>$20</p>
+        <button class="btn add" data-id="p1">Add to Cart</button>
+      </div>
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000&auto=format&fit=crop" alt="Graphic Tee">
+        <h3>Graphic Tee</h3>
+        <p>$15</p>
+        <button class="btn add" data-id="s1">Add to Cart</button>
+      </div>
+      <div class="product-item">
+        <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1000&auto=format&fit=crop" alt="Blue Jean Jacket">
+        <h3>Blue Jean Jacket</h3>
+        <p>$24</p>
+        <button class="btn add" data-id="j4">Add to Cart</button>
+      </div>
+    </div>
+  </main>
+
+  <aside>
+    <h2>Categories</h2>
+    <ul>
+      <li><a href="caps.html">Caps</a></li>
+      <li><a href="pants.html">Pants</a></li>
+      <li><a href="shirts.html">Shirts</a></li>
+      <li><a href="jackets.html">Jackets</a></li>
+    </ul>
+  </aside>
+
+  <footer>
+    <p>&copy; 2026 GIKOMBA ONLINE</p>
+  </footer>
+
+  <script>
+    // Shared cart storage key across pages
+    const CART_KEY = 'thrift_cart_simple';
+    const PRODUCTS = {
+      cap1: { id:'cap1', name:'Classic Cap', price:10 },
+      p1: { id:'p1', name:'Blue Jeans', price:20 },
+      s1: { id:'s1', name:'Graphic Tee', price:15 },
+      j4: { id:'j4', name:'Blue Jean Jacket', price:24 },
+    };
+    function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)) || {}; } catch { return {}; } }
+    function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
+    function countItems(c){ return Object.values(c).reduce((a,b)=>a+b,0) }
+    function renderCount(){ const c = loadCart(); const el = document.getElementById('cartCount'); if(el) el.textContent = countItems(c); }
+    function add(id){ const c = loadCart(); c[id] = (c[id]||0)+1; saveCart(c); renderCount(); }
+
+    document.addEventListener('click', (e)=>{ const b = e.target.closest('.add'); if(b){ add(b.dataset.id); } });
+    renderCount();
+  </script>
+
+  </body>
+</html>

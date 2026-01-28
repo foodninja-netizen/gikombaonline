@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jackets - GIKOMBA ONLINE</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body{ color:#e5e7eb; background:#0f172a; font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto }
+    header, footer{ padding:1rem }
+    nav ul{ display:flex; gap:.75rem; list-style:none; padding:0 }
+    a{ color:#86efac; text-decoration:none }
+    .container{ max-width:1100px; margin:0 auto; padding:1rem }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:1rem }
+    .card{ background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; overflow:hidden }
+    .card img{ width:100%; aspect-ratio:4/3; object-fit:cover }
+    .card .body{ padding:.75rem }
+    .btn{ background:#1a2e22; color:#d1fae5; border:1px solid rgba(34,197,94,.25); padding:.5rem .7rem; border-radius:8px; cursor:pointer }
+    .price{ color:#86efac; font-weight:700 }
+    .nav-cart-count{ background:#22c55e; color:#0b1220; border-radius:999px; padding:0 .4rem; margin-left:.35rem; font-weight:700 }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GIKOMBA ONLINE</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="caps.html">Caps</a></li>
+        <li><a href="jackets.html">Jackets</a></li>
+        <li><a href="pants.html">Pants</a></li>
+        <li><a href="shirts.html">Shirts</a></li>
+        <li><a href="cart.html">Cart <span id="cartCount" class="nav-cart-count">0</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Jackets</h2>
+    <div class="grid">
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1000&auto=format&fit=crop" alt="Denim Jacket">
+        <div class="body">
+          <h3>Vintage Denim Jacket</h3>
+          <div class="price">$28</div>
+          <button class="btn add" data-id="j1">Add to Cart</button>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1520975922284-9e0ce8273b52?q=80&w=1000&auto=format&fit=crop" alt="Leather Jacket">
+        <div class="body">
+          <h3>Brown Leather Jacket</h3>
+          <div class="price">$45</div>
+          <button class="btn add" data-id="j2">Add to Cart</button>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop" alt="Puffer Jacket">
+        <div class="body">
+          <h3>Puffer Jacket</h3>
+          <div class="price">$30</div>
+          <button class="btn add" data-id="j3">Add to Cart</button>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1548883354-89cf9925dfed?q=80&w=1000&auto=format&fit=crop" alt="Blue Jean Jacket">
+        <div class="body">
+          <h3>Blue Jean Jacket</h3>
+          <div class="price">$24</div>
+          <button class="btn add" data-id="j4">Add to Cart</button>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="container">&copy; 2026 GIKOMBA ONLINE</footer>
+
+  <script>
+    // Unified cart storage across pages
+    const CART_KEY = 'thrift_cart_simple';
+    const PRODUCTS = {
+      j1: { id:'j1', name:'Vintage Denim Jacket', price:28 },
+      j2: { id:'j2', name:'Brown Leather Jacket', price:45 },
+      j3: { id:'j3', name:'Puffer Jacket', price:30 },
+      j4: { id:'j4', name:'Blue Jean Jacket', price:24 },
+    };
+    function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)) || {}; } catch { return {}; } }
+    function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
+    function countItems(c){ return Object.values(c).reduce((a,b)=>a+b,0) }
+    function renderCount(){ document.getElementById('cartCount').textContent = countItems(loadCart()); }
+    function add(id){ const c = loadCart(); c[id] = (c[id]||0)+1; saveCart(c); renderCount(); }
+
+    document.addEventListener('click', (e)=>{
+      const b = e.target.closest('.add'); if(b) add(b.dataset.id);
+    });
+    renderCount();
+  </script>
+</body>
+</html>
